@@ -3,21 +3,14 @@ package ore.seccore.securitycore;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Test;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.Security;
+import java.security.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CryptoTests {
+public class CipherAESTests {
 
     private String text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut" +
             " labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut " +
@@ -25,15 +18,18 @@ public class CryptoTests {
             "dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia " +
             "deserunt mollit anim id est laborum";
 
-    public CryptoTests() {
+    public CipherAESTests() {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    private SecretKeySpec generateKey() {
-        byte[] keyBytes = new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-        String algorithm = "RawBytesa";
+    private SecretKey generateKey() throws NoSuchAlgorithmException {
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
 
-        return new SecretKeySpec(keyBytes, algorithm);
+        SecureRandom secureRandom = new SecureRandom();
+        int keyBitSize = 256;
+        keyGenerator.init(keyBitSize, secureRandom);
+
+        return keyGenerator.generateKey();
     }
 
     private IvParameterSpec generateIv() {
@@ -45,7 +41,7 @@ public class CryptoTests {
     public void cypherAES() throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 
-        SecretKeySpec key = generateKey();
+        SecretKey key = generateKey();
         IvParameterSpec iv = generateIv();
 
         cipher.init(Cipher.ENCRYPT_MODE, key, iv);
