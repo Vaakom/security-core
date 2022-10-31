@@ -10,7 +10,7 @@ import java.security.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CipherAESTests {
+public class CipherDigestTests {
 
     private String text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut" +
             " labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut " +
@@ -18,7 +18,7 @@ public class CipherAESTests {
             "dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia " +
             "deserunt mollit anim id est laborum";
 
-    public CipherAESTests() {
+    public CipherDigestTests() {
         Security.addProvider(new BouncyCastleProvider());
     }
 
@@ -54,4 +54,12 @@ public class CipherAESTests {
 
         assertEquals(text, decryptedText);
     }
+
+    @Test
+    public void digest() throws NoSuchAlgorithmException {
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+        byte[] digest = messageDigest.digest(text.getBytes(StandardCharsets.UTF_8));
+    }
+
+
 }
